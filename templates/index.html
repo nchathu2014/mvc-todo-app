@@ -4,17 +4,48 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ToDo Application</title>
+        <style>
+                .hidden{
+                    display: none;    
+                }
+        </style>
 </head>
 <body>
         <h1>ToDo Application</h1>
-        <form action="/todos/create" method="POST">
-                <input type="text" name="description"/>
+        <div id="error" class="hidden">Something went wrong, Try again</div>
+        <form id="form">
+                <input type="text" name="description" id="description"/>
                 <input type="submit" value="Create"/>
         </form>
-        <ul>
+        <ul id='todos'>
                 {%for d in data%}
-                <li>{{d.description}}</li>
+                <li>{{d.id}}{{d.description}}</li>
                 {%endfor%}
         </ul>
 </body>
+<script>
+        document.getElementById('form').onsubmit = function(e){
+                e.preventDefault();
+                fetch('/todos/create',{
+                        method:'POST',
+                        body:JSON.stringify({
+                                'description':document.getElementById('description').value
+                        }),
+                        headers:{
+                                'Content-Type': 'application/json'
+                        }
+                }).then(function(response){
+                        return response.json()
+                }).then(function(jsonResponse){
+                        const liItem = document.createElement('li')
+                        liItem.innerHTML = jsonResponse['description']
+                        document.getElementById('todos').appendChild(liItem)
+                        document.getElementById('description').value = ''
+                        document.getElementById('error').className = 'hidden'
+
+                }).catch(function(e){
+                        document.getElementById('error').className = ''
+                })
+        }
+</script>
 </html>
