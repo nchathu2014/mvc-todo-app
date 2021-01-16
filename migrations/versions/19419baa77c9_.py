@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('name', sa.String(), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    op.add_column('todos', sa.Column('list_id', sa.Integer(), nullable=False))
+    op.add_column('todos', sa.Column('list_id', sa.Integer(), nullable=True))
     op.create_foreign_key(None, 'todos', 'todolists', ['list_id'], ['id'])
     # ### end Alembic commands ###
 

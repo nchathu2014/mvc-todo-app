@@ -14,7 +14,7 @@ class Todo(db.Model):
   __tablename__ = 'todos'
   id = db.Column(db.Integer, primary_key=True)
   description = db.Column(db.String(), nullable=False)
-  completed = db.Column(db.Boolean, nullable=False)
+  completed = db.Column(db.Boolean, nullable=False, default=False)
   list_id = db.Column(db.Integer,db.ForeignKey('todolists.id'),nullable=False)
 
   def __repr__(self):
@@ -79,9 +79,17 @@ def set_completed_todo(todo_id):
     db.session.close()
   return redirect(url_for('index'))
 
+
+############### ToDoList Routes ##################
+@app.route('/lists/<list_id>')
+def get_list_todos(list_id):
+  return render_template('index.html',todos=Todo.query.filter_by(list_id=list_id).order_by('id'))
+
+
 @app.route('/')
 def index():
-  return render_template('index.html', todos=Todo.query.order_by('id').all())
+  return redirect(url_for('get_list_todos',list_id=1))
+  #return render_template('index.html', todos=Todo.query.order_by('id').all())
 
 if __name__ == "__main__":
   app.debug = True
